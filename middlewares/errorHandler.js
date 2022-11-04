@@ -8,6 +8,8 @@ function errorHandler(error, req, res, next) {
       return error.message;
     });
     res.status(400).json({ message: errors });
+  } else if (error.name === "Invalid Id") {
+    res.status(400).json({ message: "Invalid id" });
   } else if (error.name === "Invalid input") {
     res.status(400).json({ message: "Please check your input" });
   } else if (error.name === "NotFound") {
