@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Transaction, sequelize, Category, User, Wallet } = require("../models");
+const { Transaction, sequelize, Category, Wallet } = require("../models");
 
 class TransactionController {
   static async addTransaction(req, res, next) {
@@ -55,6 +55,43 @@ class TransactionController {
 
   static async getTransaction(req, res, next) {
     try {
+      const findTransactions = await Transaction.findAll({
+        include: [
+          {
+            model: Category,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+        ],
+        order: [["id", "DESC"]],
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json(findTransactions);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetailTransaction(req, res, next) {
+    try {
+      const { transactionId } = req.params;
+      if (isNaN(+transactionId)) throw { name: "Invalid Id" };
+
+      const transaction = await Transaction.findByPk(transactionId, {
+        include: [
+          {
+            model: Category,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+          {
+            model: Wallet,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+        ],
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      if (!transaction) throw { name: "NotFound" };
+
+      res.status(200).json(transaction);
     } catch (error) {
       next(error);
     }
@@ -68,13 +105,6 @@ class TransactionController {
   }
 
   static async deleteTransaction(req, res, next) {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getDetailTransaction(req, res, next) {
     try {
     } catch (error) {
       next(error);
