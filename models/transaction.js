@@ -77,6 +77,9 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Transaction date is required",
           },
+          isDate: {
+            msg: "Invalid date format",
+          },
         },
       },
     },

@@ -1,6 +1,6 @@
 const { Category } = require("../models");
 
-class Controller {
+class CategoryController {
   static async getCategories(req, res, next) {
     try {
       const response = await Category.findAll({
@@ -67,4 +67,4 @@ class Controller {
   }
 }
 
-module.exports = Controller;
+module.exports = CategoryController;

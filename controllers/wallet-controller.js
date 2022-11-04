@@ -1,7 +1,7 @@
 const { Wallet, Transaction, Category } = require("../models");
 const { Op } = require("sequelize");
 
-class Controller {
+class WalletController {
   static async getAllWallet(req, res, next) {
     try {
       const wallets = await Wallet.findAll({
@@ -37,10 +37,7 @@ class Controller {
       };
 
       const wallet = await Wallet.findByPk(walletId, param);
-
-      if (!wallet) {
-        throw { name: "NotFound" };
-      }
+      if (!wallet) throw { name: "NotFound" };
 
       res.status(200).json(wallet);
     } catch (error) {
@@ -48,7 +45,7 @@ class Controller {
     }
   }
 
-  static async addNewWallet(req, res, next) {
+  static async addWallet(req, res, next) {
     try {
       const { name } = req.body;
       const newWallet = await Wallet.create({
@@ -114,4 +111,4 @@ class Controller {
   }
 }
 
-module.exports = Controller;
+module.exports = WalletController;
