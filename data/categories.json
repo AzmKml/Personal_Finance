@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Salary",
+    "type": "Income"
+  },
+  {
+    "name": "Gifts",
+    "type": "Income"
+  },
+  {
+    "name": "Interest Money",
+    "type": "Income"
+  },
+  {
+    "name": "Selling",
+    "type": "Income"
+  },
+  {
+    "name": "Other Income",
+    "type": "Income"
+  },
+  {
+    "name": "Withdrawal",
+    "type": "Expense"
+  },
+  {
+    "name": "Business",
+    "type": "Expense"
+  },
+  {
+    "name": "Investment",
+    "type": "Expense"
+  },
+  {
+    "name": "Home",
+    "type": "Expense"
+  },
+  {
+    "name": "Gifts & Donations",
+    "type": "Expense"
+  },
+  {
+    "name": "Heath & Fitness",
+    "type": "Expense"
+  },
+  {
+    "name": "Travel",
+    "type": "Expense"
+  },
+  {
+    "name": "Entertainment",
+    "type": "Expense"
+  },
+  {
+    "name": "Friends & Lover",
+    "type": "Expense"
+  },
+  {
+    "name": "Shopping",
+    "type": "Expense"
+  },
+  {
+    "name": "Transportation",
+    "type": "Expense"
+  },
+  {
+    "name": "Bills & Utilities",
+    "type": "Expense"
+  },
+  {
+    "name": "Food & Beverage",
+    "type": "Expense"
+  }
+]
