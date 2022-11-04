@@ -105,8 +105,53 @@ class TransactionController {
   }
 
   static async deleteTransaction(req, res, next) {
+    const t = await sequelize.transaction();
     try {
+      const { transactionId } = req.params;
+      if (isNaN(+transactionId)) throw { name: "Invalid Id" };
+
+      const findTransaction = await Transaction.findByPk(transactionId, {
+        transaction: t,
+      });
+      if (!findTransaction) throw { name: "NotFound" };
+
+      const findWallet = await Wallet.findByPk(findTransaction.WalletId, {
+        transaction: t,
+      });
+      if (!findWallet) throw { name: "NotFound" };
+
+      const findCategory = await Category.findByPk(findTransaction.CategoryId, {
+        transaction: t,
+      });
+      if (!findCategory) throw { name: "NotFound" };
+
+      let payload = { balance: findWallet.balance };
+      if (findCategory.type === "Income") {
+        payload.balance -= +findTransaction.amount;
+      } else if (findCategory.type === "Expense") {
+        payload.balance += +findTransaction.amount;
+      }
+      const updatedWallet = await Wallet.update(payload, {
+        where: {
+          id: findWallet.id,
+        },
+        transaction: t,
+      });
+      if (!updatedWallet[0]) throw { name: "Invalid input" };
+
+      await Transaction.destroy({
+        where: {
+          id: transactionId,
+        },
+        transaction: t,
+      });
+
+      await t.commit();
+      res.status(200).json({
+        message: "Success delete Transaction with Id " + transactionId,
+      });
     } catch (error) {
+      await t.rollback();
       next(error);
     }
   }
