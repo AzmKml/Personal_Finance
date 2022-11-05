@@ -7,10 +7,10 @@
     "dialect": "sqlite"
   },
   "test": {
-    "username": "root",
-    "password": null,
+    "username": "",
+    "password": "",
     "database": "database_test",
-    "host": "personal_finance_DB",
+    "host": "personal_finance_DB_test",
     "dialect": "sqlite"
   },
   "production": {
