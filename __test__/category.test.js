@@ -7,7 +7,6 @@ const categories = require("../data/categories.json");
 beforeAll(async () => {
   try {
     categories.forEach((category) => {
-      delete category.id;
       category.createdAt = category.updatedAt = new Date();
     });
 
@@ -96,19 +95,18 @@ describe("POST /categories", () => {
 describe("PUT /categories/:id", () => {
   describe("PUT /categories/:id - success update categories", () => {
     it("Should be return an status 200 and message", async () => {
-      const payload = {
-        name: "test1",
-        type: "test1",
-      };
-      return request(app)
-        .put("/categories/1")
-        .send(payload)
+      try {
+        const payload = {
+          name: "test1",
+          type: "test1",
+        };
+        const response = await request(app).put("/categories/1").send(payload);
 
-        .then((response) => {
-          expect(response.status).toBe(200);
-          expect(response.body).toBeInstanceOf(Object);
-          expect(response.body).toHaveProperty("message");
-        });
+        expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(Array);
+        expect(response.body[0]).toBeInstanceOf(Object);
+        expect(response.body).toHaveProperty("message");
+      } catch (error) {}
     }, 100000);
   });
 

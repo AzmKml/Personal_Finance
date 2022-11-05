@@ -35,7 +35,6 @@ class WalletController {
           exclude: ["updatedAt"],
         },
       };
-
       const wallet = await Wallet.findByPk(walletId, param);
       if (!wallet) throw { name: "NotFound" };
 
