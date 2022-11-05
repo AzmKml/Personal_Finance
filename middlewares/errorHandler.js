@@ -1,5 +1,5 @@
 function errorHandler(error, req, res, next) {
-  //   console.log(error);
+  console.log(error, "<<< error handler");
   if (
     error.name === "SequelizeValidationError" ||
     error.name === "SequelizeUniqueConstraintError"
@@ -12,6 +12,8 @@ function errorHandler(error, req, res, next) {
     res.status(400).json({ message: "Invalid id" });
   } else if (error.name === "Invalid input") {
     res.status(400).json({ message: "Please check your input" });
+  } else if (error.name === "Minus Balance") {
+    res.status(400).json({ message: "Your Balance can't minus" });
   } else if (error.name === "NotFound") {
     res.status(404).json({ message: "Data not found" });
   } else {

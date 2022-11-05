@@ -35,6 +35,7 @@ class TransactionController {
       } else if (findCategory.type === "Expense") {
         payload = { balance: findWallet.balance - +amount };
       }
+      if (payload.balance < 0) throw { name: "Minus Balance" };
       let updatedWallet = await Wallet.update(payload, {
         where: {
           id: findWallet.id,
@@ -98,8 +99,100 @@ class TransactionController {
   }
 
   static async updateTransaction(req, res, next) {
+    const t = await sequelize.transaction();
     try {
+      const { transactionId } = req.params;
+      if (isNaN(+transactionId)) throw { name: "Invalid Id" };
+
+      let { description, amount, CategoryId, WalletId, date } = req.body;
+      if (isNaN(+amount)) throw { name: "Invalid input" };
+
+      const findTransactions = await Transaction.findByPk(transactionId, {
+        transaction: t,
+      });
+      if (!findTransactions) throw { name: "NotFound" };
+
+      const findCategory = await Category.findByPk(
+        findTransactions.CategoryId,
+        { transaction: t }
+      );
+
+      if (
+        WalletId != findTransactions.WalletId ||
+        amount != findTransactions.amount ||
+        CategoryId != findTransactions.CategoryId
+      ) {
+        let balance = 0;
+
+        if (findCategory.type === "Income") {
+          balance = -findTransactions.amount;
+        } else if (findCategory.type === "Expense") {
+          balance = +findTransactions.amount;
+        }
+        const clearBalance = await Wallet.increment(
+          { balance },
+          { where: { id: findTransactions.WalletId }, transaction: t }
+        );
+        if (!clearBalance[0][1]) throw { name: "Invalid input" };
+
+        const checkBalance = await Wallet.findByPk(findTransactions.WalletId, {
+          transaction: t,
+        });
+        if (checkBalance.balance < 0) throw { name: "Minus Balance" };
+
+        const newWallet = await Wallet.findByPk(WalletId, {
+          transaction: t,
+        });
+        if (!newWallet) throw { name: "NotFound" };
+
+        const newCategory = await Category.findByPk(CategoryId, {
+          transaction: t,
+        });
+        if (!newCategory) throw { name: "NotFound" };
+
+        let newBalance = 0;
+        if (newCategory.type === "Income") {
+          newBalance = +amount;
+        } else if (newCategory.type === "Expense") {
+          newBalance = -amount;
+        }
+
+        let updatedWallet = await Wallet.increment(
+          { balance: newBalance },
+          { where: { id: WalletId }, transaction: t }
+        );
+        if (!updatedWallet[0][1]) throw { name: "Invalid input" };
+
+        let checkBalance2 = await Wallet.findByPk(WalletId, {
+          transaction: t,
+        });
+        if (checkBalance2.balance < 0) throw { name: "Minus Balance" };
+      }
+
+      const transactionUpdated = await Transaction.update(
+        {
+          description,
+          amount,
+          date,
+          CategoryId,
+          WalletId,
+        },
+        {
+          where: {
+            id: transactionId,
+          },
+          transaction: t,
+        }
+      );
+      if (!transactionUpdated[0]) throw { name: "Invalid input" };
+
+      await t.commit();
+
+      res.status(200).json({
+        message: "Succes Edit Transaction with Id " + transactionId,
+      });
     } catch (error) {
+      await t.rollback();
       next(error);
     }
   }
@@ -145,6 +238,11 @@ class TransactionController {
         },
         transaction: t,
       });
+
+      const checkBalance = await Wallet.findByPk(findTransaction.WalletId, {
+        transaction: t,
+      });
+      if (checkBalance.balance < 0) throw { name: "Minus Balance" };
 
       await t.commit();
       res.status(200).json({
