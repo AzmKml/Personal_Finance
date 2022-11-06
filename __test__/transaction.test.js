@@ -59,29 +59,6 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
-    // await queryInterface.bulkDelete("Transactions", null, {
-    //   truncate: true,
-    //   cascade: true,
-    //   restartIdentity: true,
-    // });
-    // await queryInterface.bulkDelete("Wallets", null, {
-    //   truncate: true,
-    //   cascade: true,
-    //   restartIdentity: true,
-    // });
-    // await queryInterface.bulkDelete("Categories", null, {
-    //   truncate: true,
-    //   cascade: true,
-    //   restartIdentity: true,
-    // });
-    // await sequelize.query("delete from 'Categories'");
-    // await sequelize.query(
-    //   "delete from sqlite_sequence where name='Categories'"
-    // );
-    // await sequelize.query("delete from 'Transactions'");
-    // await sequelize.query(
-    //   "delete from sqlite_sequence where name='Transactions'"
-    // );
     await sequelize.query("delete from 'Wallets'");
     await sequelize.query("delete from sqlite_sequence where name='Wallets'");
     await sequelize.query("delete from 'Transactions'");
@@ -101,15 +78,6 @@ afterAll(async () => {
     await sequelize.query(
       "UPDATE sqlite_sequence SET seq=1 WHERE name = 'Transactions'"
     );
-    // await sequelize.query(
-    //   "UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Transactions'"
-    // );
-    // await sequelize.query(
-    //   "UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = 'Wallets'"
-    // );
-    // await sequelize.query(
-    //   "DELETE FROM `sqlite_sequence` WHERE `name` = 'Categories'"
-    // );
   } catch (error) {}
 });
 
