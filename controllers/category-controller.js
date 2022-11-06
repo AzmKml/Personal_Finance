@@ -40,7 +40,6 @@ class CategoryController {
         { name, type },
         { where: { id } }
       );
-      if (!updatedCategory[0]) throw { name: "Invalid input" };
 
       res.status(200).json({
         message: `Success update category with id ${id}`,

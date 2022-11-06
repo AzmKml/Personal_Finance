@@ -133,7 +133,6 @@ class TransactionController {
           { balance },
           { where: { id: findTransactions.WalletId }, transaction: t }
         );
-        if (!clearBalance[0][1]) throw { name: "Invalid input" };
 
         const checkBalance = await Wallet.findByPk(findTransactions.WalletId, {
           transaction: t,
@@ -161,7 +160,6 @@ class TransactionController {
           { balance: newBalance },
           { where: { id: WalletId }, transaction: t }
         );
-        if (!updatedWallet[0][1]) throw { name: "Invalid input" };
 
         let checkBalance2 = await Wallet.findByPk(WalletId, {
           transaction: t,
@@ -184,7 +182,6 @@ class TransactionController {
           transaction: t,
         }
       );
-      if (!transactionUpdated[0]) throw { name: "Invalid input" };
 
       await t.commit();
 
@@ -211,12 +208,10 @@ class TransactionController {
       const findWallet = await Wallet.findByPk(findTransaction.WalletId, {
         transaction: t,
       });
-      if (!findWallet) throw { name: "NotFound" };
 
       const findCategory = await Category.findByPk(findTransaction.CategoryId, {
         transaction: t,
       });
-      if (!findCategory) throw { name: "NotFound" };
 
       let payload = { balance: findWallet.balance };
       if (findCategory.type === "Income") {

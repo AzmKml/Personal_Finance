@@ -151,6 +151,21 @@ describe("POST /transactions", () => {
       expect(response.body).toHaveProperty("message");
     }, 100000);
   });
+  describe("success", () => {
+    it("Should be return an object", async () => {
+      const response = await request(app).post("/transactions").send({
+        amount: 1000,
+        date: new Date(),
+        CategoryId: 13,
+        WalletId: 1,
+        description: "test",
+      });
+
+      expect(response.status).toBe(201);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
 
   describe("Failed not provide description", () => {
     it("should be return an object message", async () => {
@@ -171,7 +186,7 @@ describe("POST /transactions", () => {
   describe("Failed not provide amount", () => {
     it("should be return an object message", async () => {
       const data = {
-        amount: undefined,
+        amount: "",
         date: new Date(),
         CategoryId: 1,
         WalletId: 1,
@@ -341,6 +356,22 @@ describe("PUT /transactions/:id", () => {
       };
       const response = await request(app).put("/transactions/100").send(data);
       expect(response.status).toBe(404);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
+  describe("Failed Transactions amount not valid", () => {
+    it("should be return an object message", async () => {
+      const data = {
+        description: "updateTest",
+        amount: "asdsadsad",
+        date: new Date(),
+        CategoryId: 1,
+        WalletId: 1,
+      };
+      const response = await request(app).put("/transactions/100").send(data);
+      expect(response.status).toBe(400);
       expect(response.body).toBeInstanceOf(Object);
       expect(response.body).toHaveProperty("message");
     }, 100000);

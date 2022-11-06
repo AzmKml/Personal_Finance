@@ -38,6 +38,8 @@ describe("GET /categories", () => {
       expect(response.status).toBe(200);
       expect(response.body).toBeInstanceOf(Array);
       expect(response.body[0]).toBeInstanceOf(Object);
+      expect(response.body[0]).toHaveProperty("name", expect.any(String));
+      expect(response.body[0]).toHaveProperty("type", expect.any(String));
     }, 100000);
   });
 });
@@ -60,7 +62,7 @@ describe("POST /categories", () => {
     }, 100000);
   });
 
-  describe("failed post category", () => {
+  describe("failed post category name not provide", () => {
     it("Should be return an status 400 and object with message error", async () => {
       const payload = {
         name: "",
@@ -75,10 +77,42 @@ describe("POST /categories", () => {
           expect(response.body).toBeInstanceOf(Object);
         });
     }, 100000);
+  });
+  describe("failed post category type not provide", () => {
     it("Should be return an status 400 and object with message error", async () => {
       const payload = {
         name: "test",
         type: "",
+      };
+      return request(app)
+        .post("/categories")
+        .send(payload)
+
+        .then((response) => {
+          expect(response.status).toBe(400);
+          expect(response.body).toBeInstanceOf(Object);
+        });
+    }, 100000);
+  });
+  describe("failed post category no type", () => {
+    it("Should be return an status 400 and object with message error", async () => {
+      const payload = {
+        name: "test",
+      };
+      return request(app)
+        .post("/categories")
+        .send(payload)
+
+        .then((response) => {
+          expect(response.status).toBe(400);
+          expect(response.body).toBeInstanceOf(Object);
+        });
+    }, 100000);
+  });
+  describe("failed post category no name", () => {
+    it("Should be return an status 400 and object with message error", async () => {
+      const payload = {
+        type: "test",
       };
       return request(app)
         .post("/categories")
@@ -169,10 +203,20 @@ describe("DELETE /categories:id", () => {
   });
 
   describe("failed delete category", () => {
-    it("Should be return an status 404 and message", async () => {
+    it("Should be return an status 404 and error message", async () => {
       const response = await request(app).delete("/categories/100");
 
       expect(response.status).toBe(404);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
+  describe("failed delete category invalid id", () => {
+    it("Should be return an status 400 and error message", async () => {
+      const response = await request(app).delete("/categories/stringhere");
+
+      expect(response.status).toBe(400);
       expect(response.body).toBeInstanceOf(Object);
       expect(response.body).toHaveProperty("message");
     }, 100000);
