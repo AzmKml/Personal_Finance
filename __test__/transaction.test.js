@@ -298,6 +298,38 @@ describe("PUT /transactions/:id", () => {
     }, 100000);
   });
 
+  describe("Succes test", () => {
+    it("should be return an object message success", async () => {
+      const data = {
+        amount: 50000001,
+        date: new Date(),
+        CategoryId: 3,
+        WalletId: 1,
+        description: "test",
+      };
+      const response = await request(app).put("/transactions/4").send(data);
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
+  describe("Succes test", () => {
+    it("should be return an object message success", async () => {
+      const data = {
+        amount: 170000000,
+        date: new Date(),
+        CategoryId: 15,
+        WalletId: 1,
+        description: "test",
+      };
+      const response = await request(app).put("/transactions/2").send(data);
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
   describe("Failed Transactions not found", () => {
     it("should be return an object message", async () => {
       const data = {
@@ -426,6 +458,22 @@ describe("PUT /transactions/:id", () => {
       expect(response.body).toHaveProperty("message");
     }, 100000);
   });
+
+  describe("failed edited amount cannot make balance minus", () => {
+    it("should be return an object message", async () => {
+      const data = {
+        description: "updateTest",
+        amount: 300000000,
+        date: new Date(),
+        CategoryId: 13,
+        WalletId: 1,
+      };
+      const response = await request(app).put("/transactions/4").send(data);
+      expect(response.status).toBe(400);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
 });
 
 describe("Delete /transactions/:id", () => {
@@ -458,6 +506,15 @@ describe("Delete /transactions/:id", () => {
     it("should return error message", async () => {
       const response = await request(app).delete("/transactions/1");
       expect(response.status).toBe(400);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
+  describe("Succes test", () => {
+    it("should return a success message", async () => {
+      const response = await request(app).delete("/transactions/2");
+      expect(response.status).toBe(200);
       expect(response.body).toBeInstanceOf(Object);
       expect(response.body).toHaveProperty("message");
     }, 100000);
