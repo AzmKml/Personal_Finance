@@ -18,32 +18,32 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
-    await queryInterface.bulkDelete("Categories", null, {
-      truncate: true,
-      cascade: true,
-      restartIdentity: true,
-    });
+    await sequelize.query("delete from 'Categories'");
+    await sequelize.query(
+      "delete from sqlite_sequence where name='Categories'"
+    );
+    await sequelize.query(
+      "UPDATE sqlite_sequence SET seq=1 WHERE name = 'Categories'"
+    );
   } catch (error) {
     console.log(error);
   }
 });
 
 describe("GET /categories", () => {
-  describe("GET /categories - success get categories", () => {
+  describe("success get categories", () => {
     it("Should be return an status 200 and array with data of categories", async () => {
-      try {
-        const response = await request(app).get("/categories");
+      const response = await request(app).get("/categories");
 
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
-        expect(response.body[0]).toBeInstanceOf(Object);
-      } catch (error) {}
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body[0]).toBeInstanceOf(Object);
     }, 100000);
   });
 });
 
 describe("POST /categories", () => {
-  describe("POST /categories - success create category", () => {
+  describe("success create category", () => {
     it("Should be return an status 201 and message", async () => {
       const payload = {
         name: "test",
@@ -60,7 +60,7 @@ describe("POST /categories", () => {
     }, 100000);
   });
 
-  describe("POST /categories - failed post category", () => {
+  describe("failed post category", () => {
     it("Should be return an status 400 and object with message error", async () => {
       const payload = {
         name: "",
@@ -93,24 +93,21 @@ describe("POST /categories", () => {
 });
 
 describe("PUT /categories/:id", () => {
-  describe("PUT /categories/:id - success update categories", () => {
+  describe("success update categories", () => {
     it("Should be return an status 200 and message", async () => {
-      try {
-        const payload = {
-          name: "test1",
-          type: "test1",
-        };
-        const response = await request(app).put("/categories/1").send(payload);
+      const payload = {
+        name: "test1",
+        type: "test1",
+      };
+      const response = await request(app).put("/categories/1").send(payload);
 
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
-        expect(response.body[0]).toBeInstanceOf(Object);
-        expect(response.body).toHaveProperty("message");
-      } catch (error) {}
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
     }, 100000);
   });
 
-  describe("PUT /categories/:id - failed post category", () => {
+  describe("failed post category", () => {
     it("Should be return an status 400 and object with message error", async () => {
       const payload = {
         name: "",
@@ -161,44 +158,23 @@ describe("PUT /categories/:id", () => {
 });
 
 describe("DELETE /categories:id", () => {
-  describe("DELETE /categories:id - success delete category", () => {
+  describe("success delete category", () => {
     it("Should be return an status 200 and message", async () => {
-      try {
-        const response = await request(app).delete("/categories/1");
-
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Object);
-        expect(response.body).toHaveProperty("message");
-      } catch (error) {}
-    }, 100000);
-  });
-
-  describe("DELETE /categories:id - failed delete category", () => {
-    it("Should be return an status 404 and message", async () => {
-      try {
-        const response = await request(app).delete("/categories/100");
-
-        expect(response.status).toBe(404);
-        expect(response.body).toBeInstanceOf(Object);
-        expect(response.body).toHaveProperty("message");
-      } catch (error) {}
-    }, 100000);
-  });
-});
-
-describe("GET /categories - when category data is empty", () => {
-  it("Should be return an status 200 and emppty array", async () => {
-    try {
-      await queryInterface.bulkDelete("Categories", null, {
-        truncate: true,
-        cascade: true,
-        restartIdentity: true,
-      });
-      const response = await request(app).get("/categories");
+      const response = await request(app).delete("/categories/1");
 
       expect(response.status).toBe(200);
-      expect(response.body).toBeInstanceOf(Array);
-      expect(response.body[0]).toBeInstanceOf(Object);
-    } catch (error) {}
-  }, 100000);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
+
+  describe("failed delete category", () => {
+    it("Should be return an status 404 and message", async () => {
+      const response = await request(app).delete("/categories/100");
+
+      expect(response.status).toBe(404);
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty("message");
+    }, 100000);
+  });
 });
